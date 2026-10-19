@@ -1,14 +1,18 @@
 import mongoose from "mongoose";
 
-export async function connectDB() {
-  const uri = process.env.MONGODB_URI;
+let cachedPromise: Promise<typeof mongoose> | null = null;
+
+export async function connectDB(): Promise<typeof mongoose> {
+  const uri = process.env.MONGODB_URL || process.env.MONGODB_URI;
 
   if (!uri) {
-    throw new Error(
-      "MONGODB_URI is missing. Copy .env.example to .env and fill it in."
-    );
+    throw new Error("MONGODB_URL is missing in environment variables.");
   }
 
-  await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
-  console.log("MongoDB connected:", mongoose.connection.name);
+  if (cachedPromise) {
+    return cachedPromise;
+  }
+
+  cachedPromise = mongoose.connect(uri);
+  return cachedPromise;
 }
