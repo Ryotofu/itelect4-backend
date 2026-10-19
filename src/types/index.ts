@@ -8,21 +8,21 @@ export interface User {
   isActive: boolean;
 }
 
-export interface Recipe {
-  id: number;
-  userId: number;
+export interface Course {
+  id?: string;
+  code: string;
   title: string;
-  category: "breakfast" | "lunch" | "dinner" | "dessert";
-  prepTimeMinutes: number;
-  createdAt: Date;
+  description: string;
+  units: number;
+  category: string;
+  prerequisites?: string[];
 }
 
 export type UserDoc = Omit<User, "id"> & {
   password: string;
 };
 
-export type RecipeDoc = Omit<Recipe, "id" | "userId"> & {
-  userId: Types.ObjectId;
-};
-
-export type NewRecipeBody = Pick<Recipe, "title" | "category" | "prepTimeMinutes">;
+export type CourseDoc = Pick<
+  Course,
+  "code" | "title" | "description" | "units" | "category" | "prerequisites"
+>;

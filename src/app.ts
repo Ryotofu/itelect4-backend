@@ -5,20 +5,30 @@ import express, {
 } from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import { connectDB } from "./config/db";
 import { authRouter } from "./routes/auth";
-import { recipeRouter } from "./routes/recipes";
+import { courseRouter } from "./routes/courses";
 
 export const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+app.use(async (_req: Request, _res: Response, next: NextFunction) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.get("/api/health", (_req: Request, res: Response) => {
   res.json({ ok: true, db: mongoose.connection.readyState === 1 });
 });
 
 app.use("/api/auth", authRouter);
-app.use("/api/recipes", recipeRouter);
+app.use("/api/courses", courseRouter);
 
 app.use((req: Request, res: Response) => {
   res.status(404).json({
@@ -43,7 +53,8 @@ app.use(
       return;
     }
 
-    console.error(err);
     res.status(500).json({ message: "Something went wrong" });
   }
 );
+
+export default app;
