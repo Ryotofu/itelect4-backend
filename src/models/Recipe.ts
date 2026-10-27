@@ -30,7 +30,7 @@ const recipeSchema = new Schema<RecipeDoc>({
 });
 
 recipeSchema.set("toJSON", {
-  transform(_doc, ret: Record<string, unknown>) {
+  transform(_doc, ret: any) {
     ret.id = String(ret._id);
     delete ret._id;
     delete ret.__v;
